@@ -1,36 +1,94 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💻 Remote System Pulse - Web Dashboard
 
-## Getting Started
+![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue?style=for-the-badge&logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-3.0-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Shadcn/UI](https://img.shields.io/badge/Shadcn-UI-000000?style=for-the-badge&logo=shadcnui&logoColor=white)
 
-First, run the development server:
+> **Interface de monitoramento em tempo real.**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Este projeto é o frontend da solução de monitoramento de servidores. Ele consome a API REST para gerenciamento de inventário e conecta-se via **WebSockets (STOMP)** para receber atualizações de status (Online/Offline) instantaneamente, sem a necessidade de recarregar a página.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Funcionalidades
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+* **Dashboard em Tempo Real:** Atualização automática de status dos servidores via WebSockets.
+* **Gerenciamento de Inventário:** Telas para listagem, cadastro, edição e remoção de servidores.
+* **Feedback Visual:** Indicadores de status (Pulse UI) e notificações "Toast" para eventos do sistema.
+* **Arquitetura Híbrida:** Utiliza **Server Components** para carregamento rápido de dados iniciais e **Client Components** para interatividade em tempo real.
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
+## 🛠 Tech
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+* **Framework:** [Next.js 16](https://nextjs.org/) (App Router)
+* **Linguagem:** TypeScript
+* **Estilização:** Tailwind CSS
+* **Componentes UI:** [Shadcn/UI](https://ui.shadcn.com/)
+* **Comunicação Real-time:** `@stomp/stompjs` & `sockjs-client`
+* **Gerenciamento de Estado:** React Context API (para conexão WebSocket global)
+* **Ícones:** Lucide React
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## Como Rodar o Projeto
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Pré-requisitos
+* Node.js 18+ instalado.
+* O backend (**Remote System Pulse API**) deve estar rodando para que as funcionalidades de dados funcionem.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Passo a Passo
+
+1.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/seu-usuario/remote-system-pulse-web.git](https://github.com/seu-usuario/remote-system-pulse-web.git)
+    cd remote-system-pulse-web
+    ```
+
+2.  **Instale as dependências:**
+    ```bash
+    npm install
+    # ou
+    yarn install
+    ```
+
+3.  **Configuração de Variáveis de Ambiente:**
+    Crie um arquivo `.env.local` na raiz do projeto e configure o endereço da API Java:
+
+    ```env
+    NEXT_PUBLIC_API_URL=http://localhost:8080/api
+    NEXT_PUBLIC_WS_URL=http://localhost:8080/ws-pulse
+    ```
+
+4.  **Execute o servidor de desenvolvimento:**
+    ```bash
+    npm run dev
+    ```
+
+5.  Acesse `http://localhost:3000` no seu navegador.
+
+---
+
+## 📂 Arquitetura do Projeto
+
+O projeto segue a estrutura do **Next.js App Router**, organizado por funcionalidades para facilitar a escalabilidade.
+
+```text
+src/
+├── app/
+│   ├── (dashboard)/       # Layout autenticado com Sidebar e WebSocket Provider
+│   │   ├── page.tsx       # Dashboard Principal (Visão Geral)
+│   │   └── servers/       # CRUD de Servidores
+│   │       ├── page.tsx   # Lista (Server Component)
+│   │       └── new/       # Formulário de Adição
+│   └── layout.tsx         # Root Layout
+├── components/
+│   ├── ui/                # Componentes base (Shadcn - Button, Card, Input)
+│   └── dashboard/         # Widgets específicos (StatusBadge, ServerCard)
+├── context/
+│   └── WebSocketContext.tsx # Gerencia a conexão STOMP única para toda a aplicação
+├── lib/
+│   └── api.ts             # Instância do Axios configurada
+├── types/                 # Interfaces TypeScript (DTOs espelhados do Java)
+└── services/              # Camada de integração (Server Actions & Fetch)
