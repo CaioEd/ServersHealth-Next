@@ -19,7 +19,7 @@ const DashboardCards = () => {
 
       <Card className="w-1/3 cursor-pointer hover:bg-zinc-100">
         <CardHeader>
-          <h2 className="text-lg font-semibold">Total Servidores Cadastrados</h2>
+          <h2 className="text-lg font-semibold">Servidores Cadastrados</h2>
         </CardHeader>
         <CardContent>{0}</CardContent>
       </Card>
