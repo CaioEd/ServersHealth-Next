@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"; 
 import { AppSidebar } from "@/components/app-sidebar"; 
 import { Geist, Geist_Mono } from "next/font/google";
+import "@/app/globals.css";
+
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,7 +27,7 @@ export default function DashboardLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50`}>
         <SidebarProvider defaultOpen={true}>
           {" "}
           {/* ou use cookie pra persistir */}
@@ -38,7 +40,6 @@ export default function DashboardLayout({
               {/* Trigger pra mobile / colapsar */}
               <header className="p-4 border-b">
                 <SidebarTrigger />
-                {/* Aqui pode colocar um header com user avatar, notifications, etc. */}
               </header>
 
               {/* Conteúdo real das páginas */}
