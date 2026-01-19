@@ -1,7 +1,13 @@
+import DashboardCards from "@/components/dashboard/DashboardCards";
+
 export default function Home() {
   return (
     <div className="w-full min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      Servers Health Check - Dashboard
+      <div className="flex flex-col items-center justify-center p-4">
+        <h1 className="text-2xl font-bold">Informações gerais sobre os seus servidores</h1>
+        <p className="text-zinc-500">Aqui você pode ver as informações gerais sobre os seus servidores</p>
+        <DashboardCards />
+      </div>
     </div>
   );
 }
