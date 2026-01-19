@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "System Pulse"
+  title: "System Pulse",
 };
 
 export default function RootLayout({
