@@ -1,7 +1,7 @@
 "use client";
 
 import DashboardCards from "@/components/dashboard/DashboardCards";
-import DataSelects from "@/components/dashboard/DataSelects";
+import SelectContentComponent from "@/components/dashboard/SelectContentComponent";
 
 export default function Home() {
 
@@ -12,7 +12,7 @@ export default function Home() {
         <p className="text-zinc-500">Aqui você pode ver as informações gerais sobre os seus servidores</p>
         <DashboardCards />
 
-        <DataSelects />
+        <SelectContentComponent />
       </div>
     </div>
   );
