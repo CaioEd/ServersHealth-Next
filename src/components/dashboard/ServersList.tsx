@@ -1,13 +1,13 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+
+import { PenIcon } from "lucide-react";
 
 const serversMock = [
     {
@@ -70,6 +70,7 @@ export default function ServersList() {
           <TableHead>Status</TableHead>
           <TableHead>IP</TableHead>
           <TableHead className="text-right">Port</TableHead>
+          <TableHead>Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -79,6 +80,7 @@ export default function ServersList() {
             <TableCell>{server.status}</TableCell>
             <TableCell>{server.ip}</TableCell>
             <TableCell className="text-right">{server.port}</TableCell>
+            <TableCell><PenIcon className="h-4 w-4" /></TableCell>
           </TableRow>
         ))}
       </TableBody>
