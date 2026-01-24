@@ -63,17 +63,17 @@ const serversMock = [
 
 export default function ServersList() {
     return (
-    <Table>
-      <TableHeader>
+    <Table className="text-base w-full">
+      <TableHeader className="text-center">
         <TableRow>
-          <TableHead className="w-[100px]">Name</TableHead>
+          <TableHead className="text-center">Nome</TableHead>
           <TableHead>Status</TableHead>
           <TableHead>IP</TableHead>
-          <TableHead className="text-right">Port</TableHead>
-          <TableHead>Actions</TableHead>
+          <TableHead>Porta</TableHead>
+          <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
-      <TableBody>
+      <TableBody className="text-center">
         {serversMock.map((server) => (
           <TableRow key={server.id}>
             <TableCell className="font-medium">{server.name}</TableCell>
