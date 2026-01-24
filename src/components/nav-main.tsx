@@ -1,4 +1,5 @@
 "use client"
+import Link from "next/link" 
 import {
   SidebarGroup,
   SidebarGroupContent,
@@ -7,6 +8,18 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 import { Icon } from "@tabler/icons-react"
+import { LucideIcon } from "lucide-react"
+
+interface NavItem {
+  title: string
+  url: string
+  icon?: LucideIcon | React.ElementType
+  isActive?: boolean
+  items?: { // Optional: if you have sub-menus
+    title: string
+    url: string
+  }[]
+}
 
 export function NavMain({
   items,
@@ -23,10 +36,12 @@ export function NavMain({
         <SidebarMenu>
           {items.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton tooltip={item.title}>
-                {item.icon && <item.icon />}
-                <span>{item.title}</span>
-              </SidebarMenuButton>
+              <Link href={item.url}>
+                <SidebarMenuButton tooltip={item.title}className="cursor-pointer">
+                  {item.icon && <item.icon />}
+                  <span>{item.title}</span>
+                </SidebarMenuButton>
+              </Link>
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
