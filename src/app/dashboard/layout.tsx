@@ -25,9 +25,6 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-zinc-50`}>
         <SidebarProvider defaultOpen={true}>
           {" "}
           {/* ou use cookie pra persistir */}
@@ -47,7 +44,5 @@ export default function DashboardLayout({
             </main>
           </div>
         </SidebarProvider>
-      </body>
-    </html>
   );
 }
