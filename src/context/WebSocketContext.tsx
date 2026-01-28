@@ -10,7 +10,7 @@ import React, {
 import { Client } from "@stomp/stompjs";
 import SockJS from "sockjs-client";
 
-// Interface do payload que vem do Java
+// Interface do payload que vem da API
 interface ServerStatusUpdate {
   id: number;
   status: "Online" | "Offline" | "Maintenance";
@@ -32,7 +32,15 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Configuração do Cliente STOMP
-    const socketUrl = "http://localhost:8080/ws-pulse"; // URL do seu Spring Boot
+    const socketUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL; // URL da API (defina em .env.local)
+
+    // Garantir que a variável de ambiente exista em tempo de build
+    if (!socketUrl) {
+      console.error(
+        "ENV NEXT_PUBLIC_WEBSOCKET_URL não definida. Configure em .env.local, ex.: NEXT_PUBLIC_WEBSOCKET_URL=https://sua-api"
+      );
+      return;
+    }
 
     const client = new Client({
       webSocketFactory: () => new SockJS(socketUrl),

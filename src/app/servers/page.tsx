@@ -1,22 +1,26 @@
-"use client";
+// app/servers/page.tsx
+import ServersList from "@/components/servers/ServersList";
+import { getServers } from "@/services/server-service";
 
-import ServersList from "@/components/dashboard/ServersList";
+export default async function ServersListPage() {
+  const initialData = await getServers();
 
-export default function ServersListPage() {
-    return (
-        <div className="space-y-6">
-            <div className="flex flex-col gap-1">
-                <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-                    Servidores
-                </h1>
-                <p className="text-sm text-gray-500">
-                    Gerencie o status e configurações da sua infraestrutura em tempo real.
-                </p>
-            </div>
-
-            <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
-                <ServersList />
-            </div>
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">Servidores</h1>
+          <p className="text-muted-foreground">
+            Monitoramento em tempo real ({initialData.length} ativos)
+          </p>
         </div>
-    )
+        {/* Aqui poderia entrar um botão de "Novo Servidor" */}
+      </div>
+
+      <div className="rounded-md border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
+        {/* 2. Passamos os dados iniciais via props */}
+        <ServersList initialData={initialData} />
+      </div>
+    </div>
+  );
 }
