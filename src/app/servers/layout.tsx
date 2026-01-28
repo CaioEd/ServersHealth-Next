@@ -17,7 +17,6 @@ export default function ServersLayout({
         <WebSocketProvider>
           <SidebarProvider defaultOpen={true}>
             {" "}
-            {/* ou use cookie pra persistir */}
             <div className="flex min-h-screen w-full">
               {/* Sidebar fixa à esquerda */}
               <AppSidebar />

@@ -9,7 +9,6 @@ export async function getServers(): Promise<Server[]> {
   }
 
   try {
-    // cache: 'no-store' é vital para dashboards!
     // Garante que o Next.js não cacheie a resposta e sempre traga dados frescos ao dar F5.
     const response = await fetch(`${apiUrl}/servers`, {
       cache: "no-store",
