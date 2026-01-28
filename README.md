@@ -7,7 +7,7 @@
 
 > **Interface de monitoramento em tempo real.**
 
-Este projeto é o frontend da solução de monitoramento de servidores. Ele consome a API REST para gerenciamento de inventário e conecta-se via **WebSockets (STOMP)** para receber atualizações de status (Online/Offline) instantaneamente, sem a necessidade de recarregar a página.
+Este projeto é o frontend da solução de monitoramento de servidores. Ele consome a API REST e conecta-se via **WebSockets (STOMP)** para receber atualizações de status (Online/Offline) instantaneamente, sem a necessidade de recarregar a página.
 
 ---
 
@@ -15,7 +15,7 @@ Este projeto é o frontend da solução de monitoramento de servidores. Ele cons
 
 * **Dashboard em Tempo Real:** Atualização automática de status dos servidores via WebSockets.
 * **Gerenciamento de Inventário:** Telas para listagem, cadastro, edição e remoção de servidores.
-* **Feedback Visual:** Indicadores de status (Pulse UI) e notificações "Toast" para eventos do sistema.
+* **Feedback Visual:** Indicadores de status e notificações "Toast" para eventos do sistema.
 * **Arquitetura Híbrida:** Utiliza **Server Components** para carregamento rápido de dados iniciais e **Client Components** para interatividade em tempo real.
 
 ---
@@ -36,14 +36,13 @@ Este projeto é o frontend da solução de monitoramento de servidores. Ele cons
 
 ### Pré-requisitos
 * Node.js 18+ instalado.
-* O backend (**Remote System Pulse API**) deve estar rodando para que as funcionalidades de dados funcionem.
+* O backend deve estar rodando para que as funcionalidades de dados funcionem.
 
 ### Passo a Passo
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/seu-usuario/remote-system-pulse-web.git](https://github.com/seu-usuario/remote-system-pulse-web.git)
-    cd remote-system-pulse-web
+    git clone https://github.com/CaioEd/ServersHealth-Next.git
     ```
 
 2.  **Instale as dependências:**
@@ -57,8 +56,8 @@ Este projeto é o frontend da solução de monitoramento de servidores. Ele cons
     Crie um arquivo `.env.local` na raiz do projeto e configure o endereço da API Java:
 
     ```env
-    NEXT_PUBLIC_API_URL=http://localhost:8080/api
-    NEXT_PUBLIC_WS_URL=http://localhost:8080/ws-pulse
+    NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1/
+    NEXT_PUBLIC_WEBSOCKETS_URL=ws://localhost:8080/ws-pulse
     ```
 
 4.  **Execute o servidor de desenvolvimento:**
