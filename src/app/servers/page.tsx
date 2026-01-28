@@ -14,11 +14,9 @@ export default async function ServersListPage() {
             Monitoramento em tempo real ({initialData.length} ativos)
           </p>
         </div>
-        {/* Aqui poderia entrar um botão de "Novo Servidor" */}
       </div>
 
       <div className="rounded-md border border-zinc-200 bg-white p-4 dark:border-zinc-800 dark:bg-zinc-950">
-        {/* 2. Passamos os dados iniciais via props */}
         <ServersList initialData={initialData} />
       </div>
     </div>
