@@ -57,7 +57,7 @@ Este projeto é o frontend da solução de monitoramento de servidores. Ele cons
 
     ```env
     NEXT_PUBLIC_API_URL=http://localhost:8080/api/v1/
-    NEXT_PUBLIC_WEBSOCKETS_URL=ws://localhost:8080/ws-pulse
+    NEXT_PUBLIC_WEBSOCKETS_URL=http://localhost:8080/ws-pulse
     ```
 
 4.  **Execute o servidor de desenvolvimento:**
