@@ -1,10 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useTransition } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Loader2, HardDrive, PenIcon } from "lucide-react" // Adicionei Activity para ícone
+import { Loader2, HardDrive, PenIcon, Trash2Icon } from "lucide-react" // Adicionei Activity para ícone
 import { toast } from "sonner"
 import { useParams, useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
@@ -33,7 +33,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { getServerById, updateServer } from "@/services/server-service"
+import { getServerById, updateServer, deleteServer } from "@/services/server-service"
 
 // Tipos definidos conforme solicitado
 export type ServerStatusType = "ONLINE" | "OFFLINE" | "MAINTENANCE" | "UNKNOWN";
@@ -63,7 +63,9 @@ const formSchema = z.object({
 type FormValues = z.infer<typeof formSchema>
 
 export default function UpdateServer() {
+  const [idNum, setIdNum] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPending, startTransition] = useTransition();
   const params = useParams();
   const router = useRouter();
 
@@ -83,6 +85,7 @@ export default function UpdateServer() {
     const idParam = (params as any)?.id as string | string[] | undefined;
     const idStr = Array.isArray(idParam) ? idParam[0] : idParam;
     const idNum = idStr ? Number(idStr) : NaN;
+    setIdNum(idNum);
 
     if (!idStr || Number.isNaN(idNum)) return;
 
@@ -130,6 +133,29 @@ export default function UpdateServer() {
     } finally {
       setIsLoading(false);
     }
+  }
+
+  async function handleDelete(id: number) {
+    const confirmed = window.confirm(
+      "Tem certeza que deseja deletar este servidor?"
+    );
+    if (!confirmed) return;
+
+    setIsLoading(true);
+
+    startTransition(async () => {
+      try {
+        await deleteServer(id); // Chama a função do serviço
+
+        toast.success("Servidor deletado com sucesso!");
+        router.push("/servers");
+      } catch (error) {
+        console.error(error);
+        toast.error("Erro ao deletar servidor");
+      } finally {
+        setIsLoading(false);
+      }
+    });
   }
 
   return (
@@ -262,22 +288,33 @@ export default function UpdateServer() {
             className="cursor-pointer">
             Cancelar
           </Button>
-          <Button
-            onClick={form.handleSubmit(onSubmit)}
-            disabled={isLoading}
-            className="w-48 cursor-pointer">
-            {isLoading ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Salvando
-              </>
-            ) : (
-              <>
-                Salvar Alterações
-                <PenIcon className="ml-2 h-5 w-5" />
-              </>
-            )}
-          </Button>
+          <div className="flex flex-col gap-2">
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
+              disabled={isLoading}
+              className="w-48 cursor-pointer">
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Salvando
+                </>
+              ) : (
+                <>
+                  Salvar Alterações
+                  <PenIcon className="ml-2 h-5 w-5" />
+                </>
+              )}
+            </Button>
+
+            <Button
+              variant="destructive"
+              onClick={() => idNum !== null && handleDelete(idNum)}
+              disabled={isLoading || isPending}
+              className="bg-red-500 hover:bg-red-600 cursor-pointer">
+              {isPending ? "Deletando..." : "Deletar Servidor"}
+              <Trash2Icon className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
         </CardFooter>
       </Card>
     </div>

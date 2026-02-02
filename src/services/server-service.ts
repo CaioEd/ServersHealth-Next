@@ -99,3 +99,22 @@ export async function getServerById(id: number): Promise<Server | null> {
       return null;
   }
 }
+
+export async function deleteServer(id: number): Promise<void> {
+  if (!apiUrl) {
+    throw new Error("NEXT_PUBLIC_API_URL não está definida no .env");
+  }
+
+  try {
+    const response = await fetch(`${apiUrl}/servers/${id}`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro na API: ${response.status}`);
+    }
+  } catch (error) {
+    console.error("Falha ao deletar servidor:", error);
+    throw error;
+  }
+}
