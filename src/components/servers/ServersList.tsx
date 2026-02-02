@@ -1,6 +1,7 @@
 // components/dashboard/ServersList.tsx
 "use client";
 
+import Link from "next/link";
 import {
   Table,
   TableBody,
@@ -81,9 +82,11 @@ export default function ServersList({ initialData }: ServersListProps) {
                 {server.port}
               </TableCell>
               <TableCell className="text-center">
-                <button className="p-2 hover:bg-zinc-100 rounded-md transition">
-                  <PenIcon className="h-4 w-4 text-zinc-600" />
-                </button>
+                <Link href={`/servers/${server.id}`}>
+                  <button className="p-2 hover:bg-zinc-100 rounded-md transition cursor-pointer">
+                    <PenIcon className="h-4 w-4 text-zinc-600" />
+                  </button>
+                </Link>
               </TableCell>
             </TableRow>
           );

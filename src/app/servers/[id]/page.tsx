@@ -1,0 +1,285 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { Loader2, HardDrive, PenIcon } from "lucide-react" // Adicionei Activity para ícone
+import { toast } from "sonner"
+import { useParams, useRouter } from "next/navigation"
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { getServerById, updateServer } from "@/services/server-service"
+
+// Tipos definidos conforme solicitado
+export type ServerStatusType = "ONLINE" | "OFFLINE" | "MAINTENANCE" | "UNKNOWN";
+const statusOptions: ServerStatusType[] = ["ONLINE", "OFFLINE", "MAINTENANCE", "UNKNOWN"];
+
+const ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+
+const formSchema = z.object({
+  name: z.string().min(2, {
+    message: "O nome deve ter pelo menos 2 caracteres.",
+  }),
+  ip: z.string().regex(ipv4Regex, {
+    message: "Insira um endereço IPv4 válido (ex: 192.168.1.1).",
+  }),
+  port: z.coerce.number()
+    .min(1, { message: "Porta inválida." })
+    .max(65535, { message: "A porta não pode exceder 65535." }),
+  // Zod Enum garante que apenas os valores de ServerStatusType sejam aceitos
+  status: z.enum(["ONLINE", "OFFLINE", "MAINTENANCE", "UNKNOWN"]).catch("UNKNOWN"),
+  description: z.string().min(10, {
+    message: "A descrição deve ser mais detalhada (mínimo 10 caracteres).",
+  }).max(500, {
+    message: "A descrição não pode passar de 500 caracteres.",
+  }),
+})
+
+type FormValues = z.infer<typeof formSchema>
+
+export default function UpdateServer() {
+  const [isLoading, setIsLoading] = useState(false);
+  const params = useParams();
+  const router = useRouter();
+
+  const form = useForm({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: "",
+      ip: "",
+      port: 8080,
+      status: "UNKNOWN", // Valor padrão inicial
+      description: "",
+    },
+  });
+
+  // Carrega os dados do servidor com base no parâmetro da rota [id]
+  useEffect(() => {
+    const idParam = (params as any)?.id as string | string[] | undefined;
+    const idStr = Array.isArray(idParam) ? idParam[0] : idParam;
+    const idNum = idStr ? Number(idStr) : NaN;
+
+    if (!idStr || Number.isNaN(idNum)) return;
+
+    (async () => {
+      try {
+        const server = await getServerById(idNum);
+        if (server) {
+          form.reset(server);
+        }
+      } catch (error) {
+        console.error(error);
+        toast.error("Erro ao buscar servidor", {
+          description: "Falha na comunicação com a API.",
+        });
+      }
+    })();
+    // Inclui apenas dependências estáveis
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params, form]);
+
+  async function onSubmit(data: FormValues) {
+    setIsLoading(true);
+
+    try {
+      const idParam = (params as any)?.id as string | string[] | undefined;
+      const idStr = Array.isArray(idParam) ? idParam[0] : idParam;
+      const idNum = idStr ? Number(idStr) : NaN;
+
+      if (!idStr || Number.isNaN(idNum)) {
+        throw new Error("ID inválido para atualização");
+      }
+
+      await updateServer({ ...data, id: idNum });
+
+      toast.success("Servidor editado com sucesso!", {
+        description: `O servidor ${data.name} (${data.status}) foi editado.`,
+      });
+
+      router.push("/servers");
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao editar servidor", {
+        description: "Falha na comunicação com a API.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  return (
+    <div className="flex justify-center p-6">
+      <Card className="w-full max-w-lg shadow-lg">
+        <CardHeader>
+          <CardTitle className="text-2xl font-bold flex items-center gap-2">
+            <HardDrive className="w-6 h-6 text-primary" />
+            Editar Servidor
+          </CardTitle>
+          <CardDescription>Edite os dados do servidor.</CardDescription>
+        </CardHeader>
+
+        <CardContent>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              {/* Campo Nome */}
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nome do Servidor</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Ex: Backend Produção" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              {/* Grid: IP (2 cols), Porta (1 col), Status (1 col) */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {/* Campo IP */}
+                <div className="md:col-span-2">
+                  <FormField
+                    control={form.control}
+                    name="ip"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Endereço IP</FormLabel>
+                        <FormControl>
+                          <Input placeholder="192.168.0.1" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Campo Porta */}
+                <div className="md:col-span-1">
+                  <FormField
+                    control={form.control}
+                    name="port"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Porta</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            placeholder="80"
+                            {...field}
+                            value={field.value ?? ""}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Campo Status (Novo) */}
+                <div className="md:col-span-1">
+                  <FormField
+                    control={form.control}
+                    name="status"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Status</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Status" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {statusOptions.map((status) => (
+                              <SelectItem key={status} value={status}>
+                                {status}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              {/* Campo Descrição */}
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descrição</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Detalhes sobre a função deste servidor..."
+                        className="resize-none min-h-[100px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </form>
+          </Form>
+        </CardContent>
+
+        <CardFooter className="flex justify-between border-t px-6 py-4">
+          <Button
+            variant="ghost"
+            onClick={() => router.back()}
+            className="cursor-pointer">
+            Cancelar
+          </Button>
+          <Button
+            onClick={form.handleSubmit(onSubmit)}
+            disabled={isLoading}
+            className="w-48 cursor-pointer">
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Salvando
+              </>
+            ) : (
+              <>
+                Salvar Alterações
+                <PenIcon className="ml-2 h-5 w-5" />
+              </>
+            )}
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}

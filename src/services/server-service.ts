@@ -52,3 +52,50 @@ export async function createServer(serverData: Omit<Server, "id" | "status" | "l
   }
   
 }
+
+export async function updateServer(serverData: Server): Promise<Server> {
+  if (!apiUrl) {
+    throw new Error("NEXT_PUBLIC_API_URL não está definida no .env");
+  }
+
+  try {
+    const response = await fetch(`${apiUrl}/servers/${serverData.id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(serverData),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro na API: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+      console.error("Falha ao atualizar servidor:", error);
+      throw error; // Re-lança o erro para que o chamador possa tratá-lo
+  }
+  
+}
+
+export async function getServerById(id: number): Promise<Server | null> {
+  if (!apiUrl) {
+    throw new Error("NEXT_PUBLIC_API_URL não está definida no .env");
+  }
+
+  try {
+    const response = await fetch(`${apiUrl}/servers/${id}`, {
+      cache: "no-store",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Erro na API: ${response.status}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+      console.error("Falha ao buscar servidor por ID:", error);
+      return null;
+  }
+}

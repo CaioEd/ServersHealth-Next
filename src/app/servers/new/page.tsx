@@ -4,7 +4,7 @@ import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Loader2, Send, Activity } from "lucide-react" // Adicionei Activity para ícone
+import { HardDrive, Loader2, Send,  } from "lucide-react" // Adicionei Activity para ícone
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import {
@@ -75,46 +75,45 @@ export default function CreateNewServer() {
     },
   })
 
-    async function onSubmit(data: FormValues) {
-        setIsLoading(true)
-        
-        try {
-        // 2. Chamada da API
-        // Se 'data' já tem os campos exatos que a API espera, você pode passar direto.
-        await createServer(data) 
+  async function onSubmit(data: FormValues) {
+      setIsLoading(true)
+      
+      try {
+      // 2. Chamada da API
+      // Se 'data' já tem os campos exatos que a API espera, você pode passar direto.
+      await createServer(data) 
 
-        // 3. Sucesso
-        // Se o código chegou aqui, é porque o await acima não deu erro.
-        toast.success("Servidor criado!", {
-            description: `O servidor ${data.name} (${data.status}) foi registrado.`,
-        })
-        
-        // 4. Limpeza do formulário
-        form.reset({
-            name: "",
-            ip: "",
-            port: 8080,
-            status: "UNKNOWN",
-            description: ""
-        })
+      // 3. Sucesso
+      // Se o código chegou aqui, é porque o await acima não deu erro.
+      toast.success("Servidor criado!", {
+          description: `O servidor ${data.name} (${data.status}) foi registrado.`,
+      })
+      
+      // 4. Limpeza do formulário
+      form.reset({
+          name: "",
+          ip: "",
+          port: 8080,
+          status: "UNKNOWN",
+          description: ""
+      })
 
-        } catch (error) {
-        console.error(error)
-        // Dica: Se sua API retornar uma mensagem de erro, você pode usá-la aqui
-        toast.error("Erro ao criar", {
-            description: "Falha na comunicação com a API.",
-        })
-        } finally {
-        setIsLoading(false)
-        }
-    }
+      } catch (error) {
+      console.error(error)
+      toast.error("Erro ao criar", {
+          description: "Falha na comunicação com a API.",
+      })
+      } finally {
+      setIsLoading(false)
+      }
+   }
 
   return (
     <div className="flex justify-center p-6">
       <Card className="w-full max-w-lg shadow-lg">
         <CardHeader>
           <CardTitle className="text-2xl font-bold flex items-center gap-2">
-            <Activity className="w-6 h-6 text-primary" />
+            <HardDrive className="w-6 h-6 text-primary" />
             Criar Novo Servidor
           </CardTitle>
           <CardDescription>
@@ -234,13 +233,13 @@ export default function CreateNewServer() {
         </CardContent>
 
         <CardFooter className="flex justify-between border-t px-6 py-4">
-          <Button variant="ghost" onClick={() => form.reset()}>
+          <Button variant="ghost" onClick={() => form.reset()} className="cursor-pointer">
             Cancelar
           </Button>
           <Button 
             onClick={form.handleSubmit(onSubmit)} 
             disabled={isLoading}
-            className="w-32"
+            className="w-32 cursor-pointer"
           >
             {isLoading ? (
               <>
