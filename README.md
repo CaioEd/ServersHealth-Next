@@ -7,15 +7,24 @@
 
 > **Interface de monitoramento em tempo real.**
 
-Este projeto é o frontend da solução de monitoramento de servidores. Ele consome a API REST e conecta-se via **WebSockets (STOMP)** para receber atualizações de status (Online/Offline) instantaneamente, sem a necessidade de recarregar a página.
+Este projeto é o frontend da solução de monitoramento de servidores. Ele consome a API REST e conecta-se via **WebSockets (STOMP)** para receber atualizações de status (Online/Offline) e métricas de desempenho instantaneamente, sem a necessidade de recarregar a página.
+
+---
+
+## 🔗 Ecossistema do Projeto
+
+Este repositório contém o **Frontend (Dashboard)**. Para ver o projeto completo e entender a arquitetura distribuída, confira os outros componentes:
+
+* **Backend API:** [System Pulse (Spring Boot)](https://github.com/CaioEd/system-pulse) - Gerencia estados e conexões.
+* **Agente de Monitoramento:** [Go-MetricsAgent](https://github.com/CaioEd/Go-MetricsAgent) - Coletor de métricas que roda nos servidores.
 
 ---
 
 ## Funcionalidades
 
-* **Dashboard em Tempo Real:** Atualização automática de status dos servidores via WebSockets.
-* **Gerenciamento de Inventário:** Telas para listagem, cadastro, edição e remoção de servidores.
-* **Feedback Visual:** Indicadores de status e notificações "Toast" para eventos do sistema.
+* **Dashboard em Tempo Real:** Atualização automática de status e métricas (CPU/RAM) via WebSockets.
+* **Gerenciamento de Inventário:** Telas para listagem, cadastro (geração de tokens), edição e remoção de servidores.
+* **Feedback Visual:** Indicadores de status, gráficos dinâmicos e notificações "Toast" para eventos do sistema.
 * **Arquitetura Híbrida:** Utiliza **Server Components** para carregamento rápido de dados iniciais e **Client Components** para interatividade em tempo real.
 
 ---
@@ -36,13 +45,13 @@ Este projeto é o frontend da solução de monitoramento de servidores. Ele cons
 
 ### Pré-requisitos
 * Node.js 18+ instalado.
-* O backend deve estar rodando para que as funcionalidades de dados funcionem.
+* O backend (System Pulse API) deve estar rodando para que as funcionalidades de dados funcionem corretamente.
 
 ### Passo a Passo
 
 1.  **Clone o repositório:**
     ```bash
-    git clone https://github.com/CaioEd/ServersHealth-Next.git
+    git clone [https://github.com/CaioEd/ServersHealth-Next.git](https://github.com/CaioEd/ServersHealth-Next.git)
     ```
 
 2.  **Instale as dependências:**

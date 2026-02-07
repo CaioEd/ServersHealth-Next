@@ -13,31 +13,35 @@ import SockJS from "sockjs-client";
 // Interface do payload que vem da API
 interface ServerStatusUpdate {
   id: number;
-  status: "Online" | "Offline" | "Maintenance";
+  status: "ONLINE" | "OFFLINE" | "MAINTENANCE";
+  usageCpu: number;
+  usageRam: number;
+  usageDisk: number;
+  ip?: string;
 }
 
 interface WebSocketContextType {
   isConnected: boolean;
-  serverStatuses: Record<number, string>; // Mapa { 1: "Online", 2: "Offline" }
+  serverStatuses: Record<number, ServerStatusUpdate>; 
 }
 
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
 
 export function WebSocketProvider({ children }: { children: React.ReactNode }) {
   const [isConnected, setIsConnected] = useState(false);
-  const [serverStatuses, setServerStatuses] = useState<Record<number, string>>(
+  const [serverStatuses, setServerStatuses] = useState<Record<number, ServerStatusUpdate>>(
     {}
   );
   const clientRef = useRef<Client | null>(null);
 
   useEffect(() => {
     // Configuração do Cliente STOMP
-    const socketUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL; // URL da API (defina em .env.local)
+    const socketUrl = process.env.NEXT_PUBLIC_WEBSOCKETS_URL; // URL da API (defina em .env.local)
 
     // Garantir que a variável de ambiente exista em tempo de build
     if (!socketUrl) {
       console.error(
-        "ENV NEXT_PUBLIC_WEBSOCKET_URL não definida. Configure em .env.local, ex.: NEXT_PUBLIC_WEBSOCKET_URL=https://sua-api"
+        "ENV NEXT_PUBLIC_WEBSOCKETS_URL não definida. Configure em .env.local, ex.: NEXT_PUBLIC_WEBSOCKETS_URL=https://sua-api"
       );
       return;
     }
@@ -56,10 +60,11 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
           // Atualiza o estado global dos status
           setServerStatuses((prev) => ({
             ...prev,
-            [update.id]: update.status,
+            [update.id]: update, // Armazena o update completo para cada servidor pelo ID
           }));
         });
       },
+      
       onDisconnect: () => {
         console.log("🔴 Desconectado");
         setIsConnected(false);

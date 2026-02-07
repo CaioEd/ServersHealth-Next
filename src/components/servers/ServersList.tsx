@@ -22,6 +22,19 @@ interface ServersListProps {
 export default function ServersList({ initialData }: ServersListProps) {
   const { serverStatuses } = useWebSocket();
 
+  const getServerData = (server: Server) => {
+    const live = serverStatuses[server.id];
+
+    // Se tiver dados live, usa eles. Se não, usa o inicial (banco de dados)
+    return {
+      status: live?.status || server.status,
+      cpu: live?.usageCpu ?? server.usageCpu, // ?? permite que 0 seja válido
+      ram: live?.usageRam ?? server.usageRam,
+      disk: live?.usageDisk ?? server.usageDisk,
+      ip: live?.ip || server.ip
+    };
+  }
+
   // Lógica de "Merge": Dados Iniciais + Atualizações do Socket
   const getStatus = (server: Server) => {
     // Se o WebSocket mandou um status novo para este ID, usamos ele.
@@ -60,26 +73,34 @@ export default function ServersList({ initialData }: ServersListProps) {
           <TableHead className="text-center">Descrição</TableHead>
           <TableHead className="text-center">Status</TableHead>
           <TableHead className="text-center">IP</TableHead>
-          <TableHead className="text-center">Porta</TableHead>
+          <TableHead className="text-center">CPU</TableHead>
+          <TableHead className="text-center">RAM</TableHead>
+          <TableHead className="text-center">Uso de Disco</TableHead>
           <TableHead className="text-center">Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {initialData.map((server) => {
-          const currentStatus = getStatus(server);
+          const currentStatus = getServerData(server);
 
           return (
             <TableRow key={server.id}>
               <TableCell className="text-center font-medium">{server.name}</TableCell>
               <TableCell className="text-center">{server.description}</TableCell>
               <TableCell className="text-center">
-                {getStatusBadge(currentStatus)}
+                {getStatusBadge(currentStatus.status)}
               </TableCell>
               <TableCell className="text-center text-zinc-500">
-                {server.ip}
+                {currentStatus.ip}
               </TableCell>
               <TableCell className="text-center text-zinc-500">
-                {server.port}
+                {currentStatus.cpu.toFixed(2)}%
+              </TableCell>
+              <TableCell className="text-center text-zinc-500">
+                {currentStatus.ram.toFixed(2)}%
+              </TableCell>
+              <TableCell className="text-center text-zinc-500">
+                {currentStatus.disk.toFixed(2)}%
               </TableCell>
               <TableCell className="text-center">
                 <Link href={`/servers/${server.id}`}>
