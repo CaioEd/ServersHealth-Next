@@ -60,7 +60,9 @@ export default function ServersList({ initialData }: ServersListProps) {
           <TableHead className="text-center">Descrição</TableHead>
           <TableHead className="text-center">Status</TableHead>
           <TableHead className="text-center">IP</TableHead>
-          <TableHead className="text-center">Porta</TableHead>
+          <TableHead className="text-center">CPU</TableHead>
+          <TableHead className="text-center">RAM</TableHead>
+          <TableHead className="text-center">Uso de Disco</TableHead>
           <TableHead className="text-center">Ações</TableHead>
         </TableRow>
       </TableHeader>
@@ -79,7 +81,13 @@ export default function ServersList({ initialData }: ServersListProps) {
                 {server.ip}
               </TableCell>
               <TableCell className="text-center text-zinc-500">
-                {server.port}
+                {server.usageCpu.toFixed(2)}%
+              </TableCell>
+              <TableCell className="text-center text-zinc-500">
+                {server.usageRam.toFixed(2)}%
+              </TableCell>
+              <TableCell className="text-center text-zinc-500">
+                {server.usageDisk.toFixed(2)}%
               </TableCell>
               <TableCell className="text-center">
                 <Link href={`/servers/${server.id}`}>

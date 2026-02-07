@@ -32,12 +32,12 @@ export function WebSocketProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Configuração do Cliente STOMP
-    const socketUrl = process.env.NEXT_PUBLIC_WEBSOCKET_URL; // URL da API (defina em .env.local)
+    const socketUrl = process.env.NEXT_PUBLIC_WEBSOCKETS_URL; // URL da API (defina em .env.local)
 
     // Garantir que a variável de ambiente exista em tempo de build
     if (!socketUrl) {
       console.error(
-        "ENV NEXT_PUBLIC_WEBSOCKET_URL não definida. Configure em .env.local, ex.: NEXT_PUBLIC_WEBSOCKET_URL=https://sua-api"
+        "ENV NEXT_PUBLIC_WEBSOCKETS_URL não definida. Configure em .env.local, ex.: NEXT_PUBLIC_WEBSOCKETS_URL=https://sua-api"
       );
       return;
     }

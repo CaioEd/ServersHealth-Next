@@ -1,7 +1,7 @@
 // src/services/server-service.ts
 import { Server } from "@/types/server";
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL; // Lendo do .env1
+const apiUrl = process.env.NEXT_PUBLIC_API_URL; // Lendo do .env
 
 
 export async function getServers(): Promise<Server[]> {
