@@ -127,17 +127,34 @@ export default function ServersList({ initialData }: ServersListProps) {
                   {getStatusBadge(currentStatus.status)}
                 </TableCell>
                 <TableCell className="server-list-table-cell">
-                  {currentStatus.ip}
+                  {currentStatus.ip != null ? (
+                    `${currentStatus.ip}`
+                  ) : (
+                    <span className="text-gray-400">---</span>
+                  )}
                 </TableCell>
                 <TableCell className="server-list-table-cell">
-                  {currentStatus.cpu.toFixed(2)}%
+                  {currentStatus.cpu != null ? (
+                    `${currentStatus.cpu.toFixed(2)}%`
+                  ) : (
+                    <span className="text-gray-400">---</span>
+                  )}
                 </TableCell>
                 <TableCell className="server-list-table-cell">
-                  {currentStatus.ram.toFixed(2)}%
+                  {currentStatus.ram != null ? (
+                    `${currentStatus.ram.toFixed(2)}%`
+                  ) : (
+                    <span className="text-gray-400">---</span>
+                  )}
                 </TableCell>
                 <TableCell className="server-list-table-cell">
-                  {currentStatus.disk.toFixed(2)}%
+                  {currentStatus.disk != null ? (
+                    `${currentStatus.disk.toFixed(2)}%`
+                  ) : (
+                    <span className="text-gray-400">---</span>
+                  )}
                 </TableCell>
+
                 <TableCell className="server-list-table-cell">
                   <Link href={`/servers/${server.id}`}>
                     <button className="p-2 hover:bg-zinc-300 rounded-md transition cursor-pointer mt-1">
@@ -145,6 +162,7 @@ export default function ServersList({ initialData }: ServersListProps) {
                     </button>
                   </Link>
                 </TableCell>
+
                 <TableCell className="server-list-table-cell">
                   <button
                     className="p-2 hover:bg-zinc-300 rounded-md transition cursor-pointer"
