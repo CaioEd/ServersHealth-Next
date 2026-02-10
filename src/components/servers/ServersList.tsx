@@ -11,9 +11,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { PenIcon, Wifi, WifiOff, AlertTriangle } from "lucide-react";
+import { PenIcon, Wifi, WifiOff, AlertTriangle, Key } from "lucide-react";
 import { useWebSocket } from "@/context/WebSocketContext";
 import { Server } from "@/types/server"; 
+import { useState } from "react";
 
 interface ServersListProps {
   initialData: Server[]; // Recebendo via props
@@ -21,6 +22,9 @@ interface ServersListProps {
 
 export default function ServersList({ initialData }: ServersListProps) {
   const { serverStatuses } = useWebSocket();
+
+  const [openModal, setOpenModal] = useState(false);
+  const [token, setToken] = useState("");
 
   const getServerData = (server: Server) => {
     const live = serverStatuses[server.id];
@@ -65,6 +69,11 @@ export default function ServersList({ initialData }: ServersListProps) {
     );
   };
 
+  const openTokenodal = (token: string) => {
+    setToken(token);
+    setOpenModal(true);
+  };
+
   return (
     <Table className="text-base w-full">
       <TableHeader>
@@ -77,6 +86,7 @@ export default function ServersList({ initialData }: ServersListProps) {
           <TableHead className="text-center">RAM</TableHead>
           <TableHead className="text-center">Uso de Disco</TableHead>
           <TableHead className="text-center">Ações</TableHead>
+          <TableHead className="text-center">Token</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -108,10 +118,18 @@ export default function ServersList({ initialData }: ServersListProps) {
               </TableCell>
               <TableCell className="server-list-table-cell">
                 <Link href={`/servers/${server.id}`}>
-                  <button className="p-2 hover:bg-zinc-100 rounded-md transition cursor-pointer">
+                  <button className="p-2 hover:bg-zinc-300 rounded-md transition cursor-pointer mt-1">
                     <PenIcon className="h-4 w-4 text-zinc-600" />
                   </button>
                 </Link>
+              </TableCell>
+              <TableCell className="server-list-table-cell">
+                <button className="p-2 hover:bg-zinc-300 rounded-md transition cursor-pointer"
+                onClick={() => {
+                  openTokenModal(server.token);
+                }}>
+                  <Key className="h-4 w-4 text-zinc-600 mt-1" />
+                </button>
               </TableCell>
             </TableRow>
           );
