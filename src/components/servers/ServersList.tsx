@@ -1,4 +1,3 @@
-// components/dashboard/ServersList.tsx
 "use client";
 
 import Link from "next/link";
@@ -11,10 +10,27 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
-import { PenIcon, Wifi, WifiOff, AlertTriangle, Key } from "lucide-react";
+import {
+  PenIcon,
+  Wifi,
+  WifiOff,
+  AlertTriangle,
+  Key,
+  Check,
+  Copy,
+} from "lucide-react";
 import { useWebSocket } from "@/context/WebSocketContext";
-import { Server } from "@/types/server"; 
+import { Server } from "@/types/server";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"; // ← imports corretos do shadcn/ui
+import { toast } from "sonner";
 
 interface ServersListProps {
   initialData: Server[]; // Recebendo via props
@@ -22,34 +38,27 @@ interface ServersListProps {
 
 export default function ServersList({ initialData }: ServersListProps) {
   const { serverStatuses } = useWebSocket();
-
   const [openModal, setOpenModal] = useState(false);
   const [token, setToken] = useState("");
+  const [copied, setCopied] = useState(false);
 
   const getServerData = (server: Server) => {
     const live = serverStatuses[server.id];
-
-    // Se tiver dados live, usa eles. Se não, usa o inicial (banco de dados)
     return {
       status: live?.status || server.status,
-      cpu: live?.usageCpu ?? server.usageCpu, // ?? permite que 0 seja válido
+      cpu: live?.usageCpu ?? server.usageCpu,
       ram: live?.usageRam ?? server.usageRam,
       disk: live?.usageDisk ?? server.usageDisk,
-      ip: live?.ip || server.ip
+      ip: live?.ip || server.ip,
     };
-  }
+  };
 
-  // Lógica de "Merge": Dados Iniciais + Atualizações do Socket
   const getStatus = (server: Server) => {
-    // Se o WebSocket mandou um status novo para este ID, usamos ele.
-    // Caso contrário, usamos o que veio da API REST (initialData).
     return serverStatuses[server.id] || server.status;
   };
 
   const getStatusBadge = (status: string) => {
-    // Normalizando para minúsculo/maiúsculo se necessário
     const s = status.toLowerCase();
-
     if (s === "online")
       return (
         <Badge className="bg-green-500 hover:bg-green-600">
@@ -69,82 +78,137 @@ export default function ServersList({ initialData }: ServersListProps) {
     );
   };
 
-  const openTokenodal = (token: string) => {
+  const openTokenModal = (token: string) => {
     setToken(token);
+    setCopied(false);
     setOpenModal(true);
   };
 
-  return (
-    <Table className="text-base w-full">
-      <TableHeader>
-        <TableRow>
-          <TableHead className="text-center">Nome</TableHead>
-          <TableHead className="text-center">Descrição</TableHead>
-          <TableHead className="text-center">Status</TableHead>
-          <TableHead className="text-center">IP</TableHead>
-          <TableHead className="text-center">CPU</TableHead>
-          <TableHead className="text-center">RAM</TableHead>
-          <TableHead className="text-center">Uso de Disco</TableHead>
-          <TableHead className="text-center">Ações</TableHead>
-          <TableHead className="text-center">Token</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {initialData.map((server) => {
-          const currentStatus = getServerData(server);
+  const copyToClipboard = async () => {
+    if (!token) return;
+    try {
+      await navigator.clipboard.writeText(token);
+      setCopied(true);
+      toast.success("Token copiado! Agora é só colar no seu servidor.");
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      toast.error("Erro ao copiar. Tente selecionar o texto manualmente.");
+    }
+  };
 
-          return (
-            <TableRow key={server.id}>
-              <TableCell className="server-list-table-cell font-medium">
-                {server.name}
-              </TableCell>
-              <TableCell className="server-list-table-cell">
-                {server.description}
-              </TableCell>
-              <TableCell className="server-list-table-cell">
-                {getStatusBadge(currentStatus.status)}
-              </TableCell>
-              <TableCell className="server-list-table-cell">
-                {currentStatus.ip}
-              </TableCell>
-              <TableCell className="server-list-table-cell">
-                {currentStatus.cpu.toFixed(2)}%
-              </TableCell>
-              <TableCell className="server-list-table-cell">
-                {currentStatus.ram.toFixed(2)}%
-              </TableCell>
-              <TableCell className="server-list-table-cell">
-                {currentStatus.disk.toFixed(2)}%
-              </TableCell>
-              <TableCell className="server-list-table-cell">
-                <Link href={`/servers/${server.id}`}>
-                  <button className="p-2 hover:bg-zinc-300 rounded-md transition cursor-pointer mt-1">
-                    <PenIcon className="h-4 w-4 text-zinc-600" />
+  return (
+    <>
+      <Table className="text-base w-full">
+        <TableHeader>
+          <TableRow>
+            <TableHead className="text-center">Nome</TableHead>
+            <TableHead className="text-center">Descrição</TableHead>
+            <TableHead className="text-center">Status</TableHead>
+            <TableHead className="text-center">IP</TableHead>
+            <TableHead className="text-center">CPU</TableHead>
+            <TableHead className="text-center">RAM</TableHead>
+            <TableHead className="text-center">Uso de Disco</TableHead>
+            <TableHead className="text-center">Ações</TableHead>
+            <TableHead className="text-center">Token</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {initialData.map((server) => {
+            const currentStatus = getServerData(server);
+            return (
+              <TableRow key={server.id}>
+                <TableCell className="server-list-table-cell font-medium">
+                  {server.name}
+                </TableCell>
+                <TableCell className="server-list-table-cell">
+                  {server.description}
+                </TableCell>
+                <TableCell className="server-list-table-cell">
+                  {getStatusBadge(currentStatus.status)}
+                </TableCell>
+                <TableCell className="server-list-table-cell">
+                  {currentStatus.ip}
+                </TableCell>
+                <TableCell className="server-list-table-cell">
+                  {currentStatus.cpu.toFixed(2)}%
+                </TableCell>
+                <TableCell className="server-list-table-cell">
+                  {currentStatus.ram.toFixed(2)}%
+                </TableCell>
+                <TableCell className="server-list-table-cell">
+                  {currentStatus.disk.toFixed(2)}%
+                </TableCell>
+                <TableCell className="server-list-table-cell">
+                  <Link href={`/servers/${server.id}`}>
+                    <button className="p-2 hover:bg-zinc-300 rounded-md transition cursor-pointer mt-1">
+                      <PenIcon className="h-4 w-4 text-zinc-600" />
+                    </button>
+                  </Link>
+                </TableCell>
+                <TableCell className="server-list-table-cell">
+                  <button
+                    className="p-2 hover:bg-zinc-300 rounded-md transition cursor-pointer"
+                    onClick={() => openTokenModal(server.token)}>
+                    <Key className="h-4 w-4 text-zinc-600 mt-1" />
                   </button>
-                </Link>
-              </TableCell>
-              <TableCell className="server-list-table-cell">
-                <button className="p-2 hover:bg-zinc-300 rounded-md transition cursor-pointer"
-                onClick={() => {
-                  openTokenModal(server.token);
-                }}>
-                  <Key className="h-4 w-4 text-zinc-600 mt-1" />
-                </button>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+          {initialData.length === 0 && (
+            <TableRow>
+              <TableCell
+                colSpan={9} // corrigido para 9 colunas
+                className="text-center h-24 text-muted-foreground">
+                Nenhum servidor encontrado.
               </TableCell>
             </TableRow>
-          );
-        })}
+          )}
+        </TableBody>
+      </Table>
 
-        {initialData.length === 0 && (
-          <TableRow>
-            <TableCell
-              colSpan={6}
-              className="text-center h-24 text-muted-foreground">
-              Nenhum servidor encontrado.
-            </TableCell>
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
+      <Dialog open={openModal} onOpenChange={setOpenModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Token do servidor</DialogTitle>
+            <DialogDescription>
+              Copie e cole esse token no seu servidor para conectá-lo.
+              <span className="block mt-1 text-destructive font-medium">
+                Atenção: Guarde em um local seguro.
+              </span>
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center space-x-2 mt-6">
+            <div className="flex-1 p-3 bg-muted rounded-md font-mono text-sm break-all">
+              {token || "Carregando..."}
+            </div>
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={copyToClipboard}
+              disabled={!token}
+              title="Copiar token"
+              className="cursor-pointer">
+              {copied ? (
+                <Check className="h-4 w-4 text-green-600" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+          <div className="mt-4 text-xs text-muted-foreground">
+            <p>Exemplo de uso no seu servidor:</p>
+            <pre className="bg-black/80 text-white p-2 rounded mt-1 overflow-x-auto">
+              {`TOKEN=${token || "SEU_TOKEN_AQUI"}`}
+            </pre>
+          </div>
+          <div className="flex justify-end mt-6">
+            <Button className="cursor-pointer" variant="secondary" onClick={() => setOpenModal(false)}>
+              Fechar
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
