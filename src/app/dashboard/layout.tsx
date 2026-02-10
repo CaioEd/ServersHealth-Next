@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"; 
 import { AppSidebar } from "@/components/app-sidebar"; 
+import { WebSocketProvider } from "@/context/WebSocketContext";
 import "@/app/globals.css";
 
 
@@ -15,6 +16,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }>) {
   return (
+      <WebSocketProvider> 
         <SidebarProvider defaultOpen={true}>
           {" "}
           <div className="flex min-h-screen w-full">
@@ -33,5 +35,6 @@ export default function DashboardLayout({
             </main>
           </div>
         </SidebarProvider>
+      </WebSocketProvider>
   );
 }
