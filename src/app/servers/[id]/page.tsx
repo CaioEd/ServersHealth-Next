@@ -19,13 +19,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import {
   Card,
   CardContent,
   CardDescription,
@@ -35,24 +28,10 @@ import {
 } from "@/components/ui/card"
 import { getServerById, updateServer, deleteServer } from "@/services/server-service"
 
-// Tipos definidos conforme solicitado
-export type ServerStatusType = "ONLINE" | "OFFLINE" | "MAINTENANCE" | "UNKNOWN";
-const statusOptions: ServerStatusType[] = ["ONLINE", "OFFLINE", "MAINTENANCE", "UNKNOWN"];
-
-const ipv4Regex = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-
 const formSchema = z.object({
   name: z.string().min(2, {
     message: "O nome deve ter pelo menos 2 caracteres.",
   }),
-  ip: z.string().regex(ipv4Regex, {
-    message: "Insira um endereço IPv4 válido (ex: 192.168.1.1).",
-  }),
-  port: z.coerce.number()
-    .min(1, { message: "Porta inválida." })
-    .max(65535, { message: "A porta não pode exceder 65535." }),
-  // Zod Enum garante que apenas os valores de ServerStatusType sejam aceitos
-  status: z.enum(["ONLINE", "OFFLINE", "MAINTENANCE", "UNKNOWN"]).catch("UNKNOWN"),
   description: z.string().min(10, {
     message: "A descrição deve ser mais detalhada (mínimo 10 caracteres).",
   }).max(500, {
@@ -73,9 +52,6 @@ export default function UpdateServer() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
-      ip: "",
-      port: 8080,
-      status: "UNKNOWN", // Valor padrão inicial
       description: "",
     },
   });
@@ -121,7 +97,7 @@ export default function UpdateServer() {
       await updateServer({ ...data, id: idNum });
 
       toast.success("Servidor editado com sucesso!", {
-        description: `O servidor ${data.name} (${data.status}) foi editado.`,
+        description: `O servidor ${data.name} foi editado.`,
       });
 
       router.push("/servers");
@@ -186,78 +162,6 @@ export default function UpdateServer() {
                   </FormItem>
                 )}
               />
-
-              {/* Grid: IP (2 cols), Porta (1 col), Status (1 col) */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                {/* Campo IP */}
-                <div className="md:col-span-2">
-                  <FormField
-                    control={form.control}
-                    name="ip"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Endereço IP</FormLabel>
-                        <FormControl>
-                          <Input placeholder="192.168.0.1" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Campo Porta */}
-                <div className="md:col-span-1">
-                  <FormField
-                    control={form.control}
-                    name="port"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Porta</FormLabel>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            placeholder="80"
-                            {...field}
-                            value={field.value ?? ""}
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-
-                {/* Campo Status (Novo) */}
-                <div className="md:col-span-1">
-                  <FormField
-                    control={form.control}
-                    name="status"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Status</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Status" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {statusOptions.map((status) => (
-                              <SelectItem key={status} value={status}>
-                                {status}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                </div>
-              </div>
 
               {/* Campo Descrição */}
               <FormField
