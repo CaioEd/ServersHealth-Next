@@ -85,24 +85,28 @@ export default function ServersList({ initialData }: ServersListProps) {
 
           return (
             <TableRow key={server.id}>
-              <TableCell className="text-center font-medium">{server.name}</TableCell>
-              <TableCell className="text-center">{server.description}</TableCell>
-              <TableCell className="text-center">
+              <TableCell className="server-list-table-cell font-medium">
+                {server.name}
+              </TableCell>
+              <TableCell className="server-list-table-cell">
+                {server.description}
+              </TableCell>
+              <TableCell className="server-list-table-cell">
                 {getStatusBadge(currentStatus.status)}
               </TableCell>
-              <TableCell className="text-center text-zinc-500">
+              <TableCell className="server-list-table-cell">
                 {currentStatus.ip}
               </TableCell>
-              <TableCell className="text-center text-zinc-500">
+              <TableCell className="server-list-table-cell">
                 {currentStatus.cpu.toFixed(2)}%
               </TableCell>
-              <TableCell className="text-center text-zinc-500">
+              <TableCell className="server-list-table-cell">
                 {currentStatus.ram.toFixed(2)}%
               </TableCell>
-              <TableCell className="text-center text-zinc-500">
+              <TableCell className="server-list-table-cell">
                 {currentStatus.disk.toFixed(2)}%
               </TableCell>
-              <TableCell className="text-center">
+              <TableCell className="server-list-table-cell">
                 <Link href={`/servers/${server.id}`}>
                   <button className="p-2 hover:bg-zinc-100 rounded-md transition cursor-pointer">
                     <PenIcon className="h-4 w-4 text-zinc-600" />
