@@ -72,8 +72,12 @@ export default function ServersList({ initialData }: ServersListProps) {
         </Badge>
       );
     return (
-      <Badge variant="secondary">
-        <AlertTriangle className="w-3 h-3 mr-1" /> {status}
+      <Badge variant="secondary" className="bg-zinc-300">
+        <AlertTriangle className="w-3 h-3 mr-1" /> {status === "UNKNOWN" ? (
+          "Desconhecido"
+        ) : (
+          status
+        )}
       </Badge>
     );
   };
