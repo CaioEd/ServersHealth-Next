@@ -120,7 +120,7 @@ export default function ServersList({ initialData }: ServersListProps) {
           {initialData.map((server) => {
             const currentStatus = getServerData(server);
             return (
-              <TableRow key={server.id}>
+              <TableRow key={server.id} className="text-center">
                 <TableCell className="server-list-table-cell font-medium">
                   {server.name}
                 </TableCell>
