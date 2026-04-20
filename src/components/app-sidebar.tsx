@@ -21,7 +21,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
 
-import { FolderIcon, HardDriveIcon, SquareActivityIcon } from "lucide-react"
+import { FolderIcon, HardDriveIcon, SquareActivityIcon, UsersIcon } from "lucide-react"
 
 const data = {
   user: {
@@ -38,6 +38,11 @@ const data = {
       title: "Servidores",
       url: "/servers",
       icon: HardDriveIcon,
+    },
+    {
+      title: "Usuários",
+      url: "/users",
+      icon: UsersIcon,
     },
     {
       title: "Projetos",

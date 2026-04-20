@@ -143,7 +143,8 @@
 }
 
 @layer components {
-  .login-root {
+  .login-root,
+  .sp-theme {
     --red-400: #FF8585;
     --red-500: #FF6B6B;
     --red-600: #F05454;
@@ -154,21 +155,113 @@
     --surface:   #FFFFFF;
     --surface-2: #FFF7F5;
     --line:      #EFE7E2;
+    --line-2:    #F5EEEA;
     --ink:       #1A1520;
     --ink-2:     #4A4351;
     --ink-3:     #8A8391;
     --ink-4:     #B8B1BD;
   }
-  .login-root.dark {
+  .login-root.dark,
+  .sp-theme.dark {
     --red-50:   rgba(255,107,107,.10);
     --bg:        #0E0D12;
     --surface:   #161520;
     --surface-2: #1E1C2A;
     --line:      #26243A;
+    --line-2:    #1F1D2D;
     --ink:       #F2EEF7;
     --ink-2:     #B8B1C7;
     --ink-3:     #7E788F;
     --ink-4:     #524E63;
+  }
+
+  .sp-field {
+    display: flex;
+    align-items: center;
+    border-radius: 0.75rem;
+    border: 1.5px solid var(--line);
+    background-color: var(--surface);
+    transition: border-color 150ms, box-shadow 150ms;
+  }
+  .sp-field:focus-within {
+    border-color: var(--red-400);
+    box-shadow: 0 0 0 4px var(--red-50);
+  }
+  .sp-input {
+    flex: 1 1 auto;
+    width: 100%;
+    padding: 0.75rem;
+    border: 0;
+    background: transparent;
+    outline: 0;
+    font-size: 0.875rem;
+    color: var(--ink);
+    font-family: inherit;
+  }
+  .sp-input::placeholder { color: var(--ink-4); }
+  .sp-label {
+    display: block;
+    margin-bottom: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--ink-2);
+  }
+  .sp-select {
+    width: 100%;
+    padding: 0.75rem;
+    border-radius: 0.75rem;
+    border: 1.5px solid var(--line);
+    background-color: var(--surface);
+    color: var(--ink);
+    font-size: 0.875rem;
+    outline: 0;
+    transition: border-color 150ms, box-shadow 150ms;
+    cursor: pointer;
+  }
+  .sp-select:focus {
+    border-color: var(--red-400);
+    box-shadow: 0 0 0 4px var(--red-50);
+  }
+  .sp-btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border-radius: 0.75rem;
+    border: 0;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #fff;
+    background-color: var(--red-500);
+    box-shadow: 0 14px 28px -12px rgba(255,107,107,.65);
+    transition: background-color 150ms, transform 80ms;
+    cursor: pointer;
+  }
+  .sp-btn-primary:hover { background-color: var(--red-600); }
+  .sp-btn-primary:active { transform: translateY(1px); }
+  .sp-btn-primary:disabled { opacity: .7; cursor: not-allowed; }
+  .sp-btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    border-radius: 0.75rem;
+    border: 1px solid var(--line);
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ink-2);
+    background-color: var(--surface);
+    cursor: pointer;
+    transition: background-color 150ms;
+  }
+  .sp-btn-ghost:hover { background-color: var(--surface-2); }
+  .sp-card {
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background-color: var(--surface);
+    box-shadow: 0 4px 12px -6px rgba(30,10,20,.06);
   }
 
   .login-side-bg {
