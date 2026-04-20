@@ -44,6 +44,21 @@
   --radius-2xl: calc(var(--radius) + 8px);
   --radius-3xl: calc(var(--radius) + 12px);
   --radius-4xl: calc(var(--radius) + 16px);
+
+  --animate-sp-pulse: sp-pulse 2.4s ease-out infinite;
+  --animate-sp-pulse-fast: sp-pulse 2s infinite;
+  --animate-sp-bob: sp-bob 6s ease-in-out infinite;
+  --animate-sp-bob-delay: sp-bob 6s ease-in-out -2s infinite;
+}
+
+@keyframes sp-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,.7); }
+  70%  { box-shadow: 0 0 0 10px rgba(255,255,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+@keyframes sp-bob {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 :root {
@@ -124,5 +139,57 @@
   }
   .server-list-table-cell {
     @apply text-black text-center;
+  }
+}
+
+@layer components {
+  .login-root {
+    --red-400: #FF8585;
+    --red-500: #FF6B6B;
+    --red-600: #F05454;
+    --red-700: #D23F3F;
+    --red-50:  #FFF1F1;
+
+    --bg:        #FBF8F6;
+    --surface:   #FFFFFF;
+    --surface-2: #FFF7F5;
+    --line:      #EFE7E2;
+    --ink:       #1A1520;
+    --ink-2:     #4A4351;
+    --ink-3:     #8A8391;
+    --ink-4:     #B8B1BD;
+  }
+  .login-root.dark {
+    --red-50:   rgba(255,107,107,.10);
+    --bg:        #0E0D12;
+    --surface:   #161520;
+    --surface-2: #1E1C2A;
+    --line:      #26243A;
+    --ink:       #F2EEF7;
+    --ink-2:     #B8B1C7;
+    --ink-3:     #7E788F;
+    --ink-4:     #524E63;
+  }
+
+  .login-side-bg {
+    background:
+      radial-gradient(1200px 600px at 110% -10%, rgba(255,255,255,.18), transparent 60%),
+      radial-gradient(800px 400px at -20% 120%, rgba(255,255,255,.12), transparent 60%),
+      linear-gradient(135deg, #FF6B6B 0%, #FF8C77 40%, #FFB48E 100%);
+  }
+  .login-root.dark .login-side-bg {
+    background:
+      radial-gradient(900px 500px at 120% -10%, rgba(255,180,142,.22), transparent 60%),
+      linear-gradient(135deg, #4A1D1D 0%, #7A2E2E 50%, #B04E4E 100%);
+  }
+  .login-side-grid::before {
+    content: ""; position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,.07) 1px, transparent 1px);
+    background-size: 40px 40px;
+    -webkit-mask-image: radial-gradient(ellipse at 30% 20%, black, transparent 70%);
+            mask-image: radial-gradient(ellipse at 30% 20%, black, transparent 70%);
+    pointer-events: none;
   }
 }
