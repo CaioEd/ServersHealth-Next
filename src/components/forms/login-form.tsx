@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SquareActivityIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { login } from "@/services/auth-service";
 
 type Theme = "light" | "dark";
 
@@ -16,13 +17,24 @@ export function LoginForm({ theme, onToggleTheme }: LoginFormProps) {
   const router = useRouter();
   const [showPw, setShowPw] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const submitForm = (e: React.FormEvent<HTMLFormElement>) => {
+  const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitting(true);
-    setTimeout(() => {
+    setError(null);
+
+    const form = e.currentTarget;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
+
+    try {
+      await login({ email, password });
       router.push("/dashboard");
-    }, 900);
+    } catch {
+      setError("Email ou senha inválidos.");
+      setSubmitting(false);
+    }
   };
 
   const linkAccent =
@@ -197,6 +209,10 @@ export function LoginForm({ theme, onToggleTheme }: LoginFormProps) {
                 Esqueceu a senha?
               </a>
             </div>
+
+            {error && (
+              <p className="mb-3 text-center text-sm text-red-500">{error}</p>
+            )}
 
             <button
               type="submit"

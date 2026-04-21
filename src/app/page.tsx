@@ -163,12 +163,6 @@ export default function Home() {
               ))}
             </div>
           </div>
-
-          <div className="relative z-[1] mt-auto flex flex-wrap items-center justify-between gap-4 pt-7">
-            <small className="text-[15px] opacity-70">
-              Confiado por 140+ equipes de engenharia
-            </small>
-          </div>
         </aside>
       </div>
     </div>
